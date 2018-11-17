@@ -65,16 +65,11 @@ class GCloudProvider(BaseProvider):
         self.api = GCloudApi()
 
     def add_triggers(self, func_name, resource):
-        
-        events = self.get_func_data(func_name, "events", [])
-
-        for event in events:
-            trigger_id = list(event.keys())[0]
-            trigger_data = event[trigger_id]
+        events = self.get_func_data(func_name, "events", {})
+        for trigger_id, trigger_data in events.items():
             event_mapping = EVENTS_MAPPING[trigger_id]
             mapped_event = event_to_mapper(trigger_data, event_mapping)
-            resource[event_mapping.id] = mapped_event
-        
+            resource[event_mapping["id"]] = mapped_event
         return resource
 
     def generate_resource_function(self, func_name):

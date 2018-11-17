@@ -3,7 +3,7 @@ def event_to_mapper(event, mapper):
     mapped_event = dict()
     for field in event:
         mapped_event[
-            mapper[field]
+            fields[field]
         ] = event[field]
     mapped_event.update(mapper["additional_fields"])
     return mapped_event

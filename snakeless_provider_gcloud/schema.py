@@ -35,18 +35,14 @@ GCLOUD_SCHEMA = {
         str: {
             "handler": str,
             "handler_path": str,
-            "events": [
-                {
-                    Optional("http"): {
-                        "path": str
-                    }
+            "events": {
+                Optional("http"): {
+                    "path": str
                 },
-                {
-                    Optional("pubsub"): {
-                        "topic": str
-                    }
+                Optional("pubsub"): {
+                    "topic": str
                 }
-            ],
+            },
             Optional("name"): str,
             Optional("description"): str,
             Optional("memory_size", default=128): And(
@@ -71,5 +67,5 @@ GCLOUD_SCHEMA = {
             #     Optional("individually", default=False): bool,
             # },
         }
-    },
+    }
 }

@@ -1,13 +1,13 @@
 EVENTS_MAPPING = {
     "http": {
-        "trigger_id": "httpsTrigger",
+        "id": "httpsTrigger",
         "fields": {
             "path": "url"
         },
         "additional_fields": {}
     },
     "pubsub": {
-        "trigger_id": "eventTrigger",
+        "id": "eventTrigger",
         "fields": {
             "topic": "resource"
         },
