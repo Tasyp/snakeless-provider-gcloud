@@ -11,12 +11,14 @@ from google.auth.transport.requests import AuthorizedSession
 from snakeless.providers.base import BaseProvider
 from snakeless.exceptions import CommandFailure
 
+from .constants import EVENTS_MAPPING
+from .utils import event_to_mapper
+
 logger = logging.getLogger(__name__)
 
 logging.getLogger("google").setLevel(logging.WARNING)
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
-
 
 class GCloudApi(object):
     domain = "https://cloudfunctions.googleapis.com"
@@ -62,6 +64,19 @@ class GCloudProvider(BaseProvider):
         self.session = AuthorizedSession(credentials)
         self.api = GCloudApi()
 
+    def add_triggers(self, func_name, resource):
+        
+        events = self.get_func_data(func_name, "events", [])
+
+        for event in events:
+            trigger_id = list(event.keys())[0]
+            trigger_data = event[trigger_id]
+            event_mapping = EVENTS_MAPPING[trigger_id]
+            mapped_event = event_to_mapper(trigger_data, event_mapping)
+            resource[event_mapping.id] = mapped_event
+        
+        return resource
+
     def generate_resource_function(self, func_name):
         get_data = partial(self.get_func_or_project_data, func_name)
         get_func_data = partial(self.get_func_data, func_name)
@@ -84,9 +99,8 @@ class GCloudProvider(BaseProvider):
             "labels": get_func_data("tags", {}),
             "environmentVariables": env_variables,
             "sourceUploadUrl": source_url,
-            "httpsTrigger": {"url": get_func_data("path")},
         }
-        return resource_function
+        return self.add_triggers(func_name, resource_function)
 
     def package_code(self, config, func_name):
         handler_path = self.config["functions"][func_name]["handler_path"]

@@ -35,7 +35,18 @@ GCLOUD_SCHEMA = {
         str: {
             "handler": str,
             "handler_path": str,
-            "events": [{Optional("http"): {"path": str}}],
+            "events": [
+                {
+                    Optional("http"): {
+                        "path": str
+                    }
+                },
+                {
+                    Optional("pubsub"): {
+                        "topic": str
+                    }
+                }
+            ],
             Optional("name"): str,
             Optional("description"): str,
             Optional("memory_size", default=128): And(
@@ -51,7 +62,7 @@ GCLOUD_SCHEMA = {
             Optional("timeout", default=60): And(
                 Use(int), lambda timeout: timeout > 0
             ),
-            Optional("env_file_path", default=''): str,
+            Optional("env_file_path", default=""): str,
             Optional("merge_env", default=False): bool,
             Optional("tags"): {str: str},
             # Optional("package"): {
